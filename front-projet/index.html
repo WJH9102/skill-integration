@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/elementUI.css"/>
+  <title>Document</title>
+</head>
+<body>
+  <div id="app" style="width: 80%; margin: 50px auto">
+    <h1>Elasticsearch搜索</h1>
+    <div style="display:inline-block; width: 90%">
+      <el-input @keyup.enter.native="getGoods" v-model="keyword"/>
+    </div>
+    <el-button @click="getGoods" type="primary" round style="display:inline-block">搜索</el-button>
+    <div style="display: flex; justify-content: space-between;flex-wrap: wrap;">
+      <div style="width: 300px; height: auto; margin: 10px;" v-for="(item, index) in results" :key="index">
+        <img :src="item.img"/>
+        <p v-text="item.price"></p>
+        <p v-html="item.title"></p> 
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./js/axios.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/elementUI.js"></script>
+<script>
+  // import { log } from "./js/index"
+  new Vue({
+    el: "#app",
+    data() {
+      return {
+        keyword: "",
+        results: []
+      }
+    },
+    mounted() {
+      this.init();
+    },
+    methods: {
+      init() {
+        this.results = [];
+        axios.get(`http://localhost:9099/search/java/0/10`).then(res => {
+          this.results = res.data;
+          this.results.forEach(element => {
+            element.img = "http:" + element.img
+          });
+          console.log(this.results);
+        })
+      },
+      getGoods() {
+        this.results = [];
+        axios.get(`http://localhost:9099/search/${this.keyword}/0/10`).then(res => {
+          this.results = res.data;
+          this.results.forEach(element => {
+            element.img = "http:" + element.img
+          });
+          console.log(this.results);
+        })
+      }
+    }
+  })
+</script>
+</html>
